@@ -5,19 +5,60 @@
 # 4. Работа с МО
 
 import random
+import pyaspeller
+#pip install pyaspeller
 user = ""
+speller = pyaspeller.YandexSpeller()
+bot = {
+    "hello":["Привет!", "Добрый день!", "Приветствую"],
+    "bye":["Пока!","До свидания!"],
+    "about":["Бот для общения", "Чат-бот"]
+}  
+
 while True:
     user = input("Вы: ")
     user = user.lower()
+    user = speller.spelled(user)
     if user == "привет":
-        answers = ["Привет!", "Добрый день!", "Приветствую"]
-        print(f"Бот: {random.choice(answers)}")
+        print("Бот: ", random.choice(bot.get("hello")))
     elif user == "пока":
-        answers = ["Пока!","До свидания!"]
-        print(f"Бот: {random.choice(answers)}")
+        print("Бот:", random.choice(bot.get("bye")))
         break
     elif user == "кто ты":
-        answers = ["Бот для общения", "Чат-бот"]
-        print(f"Бот: {random.choice(answers)}")
+        print("Бот: ", random.choice(bot.get("about")))
     else:
         print("Бот: Это сообщение я не понимаю")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# digits (распознавание)
+# Машинное обучение (подготовка данных, преобразование и обучение, и анализ)
