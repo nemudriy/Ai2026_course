@@ -15,10 +15,19 @@ bot = {
     "about":["Бот для общения", "Чат-бот"]
 }  
 
+def filter(user_input):
+    text=[]
+    alphabet = "абвгдежзийклмнопрстуфхцчшщъыьэюяabcdefghijklmnopqrstuvwxyz"
+    for c in user_input:
+        if c in alphabet:
+            text.append(c)
+    return " ".join(text)
+
 while True:
     user = input("Вы: ")
-    user = user.lower()
+    user = filter(user.lower())
     user = speller.spelled(user)
+
     if user == "привет":
         print("Бот: ", random.choice(bot.get("hello")))
     elif user == "пока":
