@@ -28,12 +28,15 @@ while True:
     user = filter(user.lower())
     user = speller.spelled(user)
 
-    if user == "привет":
-        print("Бот: ", random.choice(bot.get("hello")))
-    elif user == "пока":
-        print("Бот:", random.choice(bot.get("bye")))
-        break
-    elif user == "кто ты":
-        print("Бот: ", random.choice(bot.get("about")))
+    answer = None
+    for theme, data in bot.items():
+        if user in data["keys"]:
+            answer = random.choice(data['answers'])
+            break
+    if answer is None:
+        print("Бот: Я не знаю ответа на этот вопрос")
     else:
-        print("Бот: Это сообщение я не понимаю")
+        print(f"Бот {answer}")
+
+    if user in bot["bye"]['keys']:
+        break
