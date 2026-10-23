@@ -35,20 +35,53 @@ def answer(text):
             return "Не понимаю вашего сообщения"
 
 
-while True:
-    user = input("Вы: ")
-    user = filter(user.lower())
-    user = speller.spelled(user)
+def add(who, text):
+    chat.configure(state=normal)
+    chat.insert("end", f"{who}:{text}\n\n")
+    chat.configure(state=disabled)
+    chat.see("end")
 
-    answer = None
-    for theme, data in bot.items():
-        if user in data["keys"]:
-            answer = random.choice(data['answers'])
-            break
-    if answer is None:
-        print("Бот: Я не знаю ответа на этот вопрос")
-    else:
-        print(f"Бот {answer}")
+def send(event=None):
+    text = entry.get().strip()
+    if not text:
+        return
+    entry.delete(0,"end")
+    add("Вы: ", text)
+    reply = answer(text)
+    add("Бот: ", reply)
+    if reply in bot["bye"]["answers"]:
+        root.after(800, root.destroy)
 
-    if user in bot["bye"]['keys']:
-        break
+root = ctk.CTk()
+root.title("Чат-бот")
+root.geometry("480x600")
+
+#Начинаем размещать элементы (текстовое поле, поле ввода и кнопка)
+#В root
+
+chat = ctk.CTkTextbox(root, wpar = "word",font=("Segoe UI", 13))
+chat.pack(fill="both",expand=True, padx=10,pady=(10,5))
+chat.configure(state="disabled")
+
+entry = ctk.CTkEntry(root, placeholder_text="Введите сообщение...")
+
+
+
+
+# while True:
+#     user = input("Вы: ")
+#     user = filter(user.lower())
+#     user = speller.spelled(user)
+
+#     answer = None
+#     for theme, data in bot.items():
+#         if user in data["keys"]:
+#             answer = random.choice(data['answers'])
+#             break
+#     if answer is None:
+#         print("Бот: Я не знаю ответа на этот вопрос")
+#     else:
+#         print(f"Бот {answer}")
+
+#     if user in bot["bye"]['keys']:
+#         break
