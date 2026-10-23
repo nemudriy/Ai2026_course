@@ -31,14 +31,13 @@ def answer(text):
     for theme in bot.values():
         if text in theme["keys"]:
             return random.choice(theme["answers"])
-        else:
-            return "Не понимаю вашего сообщения"
+    return "Не понимаю вашего сообщения"
 
 
 def add(who, text):
-    chat.configure(state=normal)
+    chat.configure(state="normal")
     chat.insert("end", f"{who}:{text}\n\n")
-    chat.configure(state=disabled)
+    chat.configure(state="disabled")
     chat.see("end")
 
 def send(event=None):
@@ -59,29 +58,16 @@ root.geometry("480x600")
 #Начинаем размещать элементы (текстовое поле, поле ввода и кнопка)
 #В root
 
-chat = ctk.CTkTextbox(root, wpar = "word",font=("Segoe UI", 13))
+chat = ctk.CTkTextbox(root, wrap = "word",font=("Segoe UI", 13))
 chat.pack(fill="both",expand=True, padx=10,pady=(10,5))
 chat.configure(state="disabled")
 
 entry = ctk.CTkEntry(root, placeholder_text="Введите сообщение...")
+entry.pack(fill="x", padx=(10,6), pady=(0,10), side="left", expand=True)
+entry.bind("<Return>", send)
 
+ctk.CTkButton(root, text="Отправить", width=100, 
+              command=send).pack(side="right", padx=(0,10),pady=(0,10))
 
-
-
-# while True:
-#     user = input("Вы: ")
-#     user = filter(user.lower())
-#     user = speller.spelled(user)
-
-#     answer = None
-#     for theme, data in bot.items():
-#         if user in data["keys"]:
-#             answer = random.choice(data['answers'])
-#             break
-#     if answer is None:
-#         print("Бот: Я не знаю ответа на этот вопрос")
-#     else:
-#         print(f"Бот {answer}")
-
-#     if user in bot["bye"]['keys']:
-#         break
+add("Бот", "Привет! Я простой бот, созданный для общения на разные темы")
+root.mainloop()
