@@ -42,6 +42,7 @@ def add(who, text):
 
 def send(event=None):
     text = entry.get().strip()
+    text = text.lower()
     if not text:
         return
     entry.delete(0,"end")
