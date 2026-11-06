@@ -1,36 +1,27 @@
-import json, os, random, re
-from collections import Counter #Счетчик частоты слов
+import json, os, random
+#from collections import Counter #Счетчик частоты слов
 import torch #библиотека для работы с НС
-#pip install torch
-import torch.nn as nn #Слои
-from torch.utils.data import Dataset, dataloader
-from tqdm import tqdm #полоса загрузки
+#import torch.nn as nn #Слои
+#from torch.utils.data import Dataset, dataloader
+import tqdm #полоса загрузки
+import transformers #Возможно придется дописать
 
 #Настройки обучения
 DATA_FILE = "data/clean_dialogs.jsonl"
 MODEL_DIR = "model"
-MAX_VOCAB = 12000 #Количество слов и знаков в словаре
-MAX_LEN = 36 #Макс.длина одного вопроса или ответа в токенах
-EMBED_SIZE = 128 #Вект.предст.каждого токена
-HIDDEN_SIZE = 256 #Размер скрытого состояния нейросети
-BATCH_SIZE = 8 #Количество примеров, одновр. обрабатываемых
+MODEL_NAME = "cointegrated/rut5-small"
+MAX_PAIRS = None #Сколько пар для обучения
+VAL_SIZE = 500 #Сколько пар для проверки
+MAX_SRC_TOKENS = 64 #Длина вопроса
+MAX_TGT_TOKENS = 96 #Длина ответа
+BATCH_SIZE = 16 #Количество примеров, одновр. обрабатываемых
 EPOCHS = 2
-LEARNING_RATE = 0.001 #Скорость обучения
-MIN_WORD_FREQ = 2 #Мин.количество появления слов в датасете.
+LEARNING_RATE = 3e-4 #Скорость обучения
 
-#Специальные обозначения
-PAD = "<pad>" #Пустоты в последовательности
-UNK = "<unk>" #Незнакомое слово в последовательности
-BOS = "<bos>" #Начало ответа
-EOS = "<eos>" #Конец ответа
-
-#Токенизация
-TOKEN_RE = re.compile(r"[а-яёa-z0-9]+|[^\w\s]",re.IGNORECASE)
-
-def tokenize(text):
-    return TOKEN_RE.findall(text.lower())
-
-#"Привет, мир" -> "Привет" + "," + "мир"
+def get_device():
+    if torch.cuda.is_available():
+        return torch.device("cuda")
+    return torch.device("cpu")
 
 def read_pairs():
     #Существует ли файл?
@@ -47,3 +38,15 @@ def read_pairs():
     if not pairs:
         raise RuntimeError("Диалогов нет")
     return pairs
+
+def make_batch(pairs, tokenizer, device):
+    questions = [q for q, a in pairs]
+    answers = [a for q,a in pairs]
+    x = tokenizer(questions, max_length = MAX_SRC_TOKENS, truncation = True, padding=True, 
+                  pad_to_multiply_of = 16, return_tensors = "pt")
+    y = tokenizer(answers, max_length = MAX_TGT_TOKENS, truncation = True, padding=True, 
+                  pad_to_multiply_of = 16, return_tensors = "pt")
+    labels = y.input_ids
+    labels[labels == tokenizer.pad_token_id] = -100 #так помечаем "пустые" токены
+    return x.input_ids.to(device), x.atteption_mask.to(device), labels.to(device)
+    
