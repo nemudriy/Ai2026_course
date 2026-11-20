@@ -72,7 +72,7 @@ class ChatWindow:
                 do_sample = True, #Подбор слов случайно
                 temperature = 0.6, #Допуск ответов (больше - хаотичнее)
                 top_p = 0.9, #отсекать маловероятные слова
-                repetion_penalty = 1.1, #штраф за повторы слов (1.0 - штрафа нет)
+                repetition_penalty = 1.0, #штраф за повторы слов (1.0 - штрафа нет)
                 max_new_tokens = 64 #предельная длинна ответа
             )
             return self.tokenizer.decode(out[0], skip_special_tokens=True) or "Пока нет ответа на это"
