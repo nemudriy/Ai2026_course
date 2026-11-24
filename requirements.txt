@@ -1,0 +1,5 @@
+datasets
+tqdm
+transformers==5.22
+sentencepiece
+protobuf
